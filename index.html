@@ -30,7 +30,6 @@
     padding: 10px;
     text-align: center;
     border-bottom: 1px solid #ddd;
-    transition: background 0.3s, color 0.3s;
   }
   th {
     background: #3498db;
@@ -45,7 +44,6 @@
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    transition: box-shadow 0.3s, border-color 0.3s;
   }
   input:focus {
     border-color: #3498db;
@@ -76,23 +74,13 @@
     margin-top: 20px;
     padding: 12px;
     border-radius: 8px;
-    transition: background 0.5s;
+    transition: background 0.3s;
   }
   #diff {
     text-align: center;
     font-size: 1.1em;
     margin-top: 5px;
     color: #e74c3c;
-  }
-
-  /* 합계 셀 강조 */
-  .highlight {
-    animation: highlightAnim 0.3s;
-  }
-
-  @keyframes highlightAnim {
-    0% { background: #f1c40f; color: #fff; }
-    100% { background: inherit; color: inherit; }
   }
 
   @media (max-width: 480px) {
@@ -140,63 +128,50 @@
 <script>
 const TARGET = 500000;
 const bills = [50000,10000,5000,1000];
-const coins = [{unit:500,bundle:40},{unit:100,bundle:50},{unit:50,bundle:50},{unit:10,bundle:50}];
+const coins = [
+  {unit:500,bundle:40},
+  {unit:100,bundle:50},
+  {unit:50,bundle:50},
+  {unit:10,bundle:50}
+];
 
-function animateValue(element, start, end, duration) {
-  const range = end - start;
-  let current = start;
-  const increment = range / (duration / 16); // 약 60fps
-  const step = () => {
-    current += increment;
-    if ((increment>0 && current>=end) || (increment<0 && current<=end)) {
-      element.textContent = end.toLocaleString() + '원';
-      return;
-    }
-    element.textContent = Math.round(current).toLocaleString() + '원';
-    requestAnimationFrame(step);
-  }
-  step();
-}
-
-function calculate(){
+function calculate() {
   let total = 0;
+  
+  // 지폐 계산
   bills.forEach(u=>{
     const count = parseInt(document.getElementById('w'+u).value)||0;
     const sum = count*u;
-    const cell = document.getElementById('sum'+u);
-    cell.classList.remove('highlight');
-    void cell.offsetWidth; // restart animation
-    cell.classList.add('highlight');
-    animateValue(cell, parseInt(cell.textContent.replace(/,/g,''))||0, sum, 300);
+    document.getElementById('sum'+u).textContent = sum.toLocaleString()+'원';
     total += sum;
   });
+
+  // 동전 계산 (묶음+낱개)
   coins.forEach(c=>{
     const b = parseInt(document.getElementById('b'+c.unit).value)||0;
     const w = parseInt(document.getElementById('w'+c.unit).value)||0;
     const sum = (b*c.bundle + w)*c.unit;
-    const cell = document.getElementById('sum'+c.unit);
-    cell.classList.remove('highlight');
-    void cell.offsetWidth;
-    cell.classList.add('highlight');
-    animateValue(cell, parseInt(cell.textContent.replace(/,/g,''))||0, sum, 300);
+    document.getElementById('sum'+c.unit).textContent = sum.toLocaleString()+'원';
     total += sum;
   });
 
+  // 총합 표시
   const totalDiv = document.getElementById('total');
-  animateValue(totalDiv, parseInt(totalDiv.textContent.replace(/,/g,''))||0, total, 300);
+  totalDiv.textContent = '총합: '+total.toLocaleString()+'원';
 
+  // 부족/초과 표시
   const diffDiv = document.getElementById('diff');
   const diff = total-TARGET;
   if(diff===0){
     totalDiv.style.background='#2ecc71';
     diffDiv.textContent='완벽히 50만원입니다!';
-  }else{
+  } else {
     totalDiv.style.background='#e74c3c';
     diffDiv.textContent = diff>0?'초과: '+diff.toLocaleString()+'원':'부족: '+(-diff).toLocaleString()+'원';
   }
 }
 
-function resetAll(){
+function resetAll() {
   [...bills,...coins.map(c=>c.unit)].forEach(u=>{
     const w=document.getElementById('w'+u); if(w) w.value='';
     const b=document.getElementById('b'+u); if(b) b.value='';
@@ -214,5 +189,6 @@ window.addEventListener('DOMContentLoaded', ()=>{
   });
 });
 </script>
+
 </body>
 </html>
