@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>돈 계산기</title>
 <style>
   body {
@@ -18,7 +18,7 @@
   }
   table {
     width: 100%;
-    max-width: 500px;
+    max-width: 400px; /* 폭 축소 */
     margin: 0 auto;
     border-collapse: collapse;
     background: #fff;
@@ -39,12 +39,12 @@
     background: #f9f9f9;
   }
   input {
-    width: 70px;
+    width: 60px; /* 입력창 폭 축소 */
     text-align: right;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 15px; /* iOS 확대 방지용 */
+    font-size: 15px; /* iOS 확대 방지 */
   }
   input:focus {
     border-color: #3498db;
@@ -90,8 +90,8 @@
       font-size: 0.9em;
     }
     input {
-      width: 60px;
-      font-size: 14px; /* 모바일에서 더 작게 */
+      width: 50px; /* 모바일에서 더 작게 */
+      font-size: 14px;
       padding: 4px;
     }
     #total {
@@ -139,7 +139,6 @@ const coins = [
 function calculate() {
   let total = 0;
   
-  // 지폐 계산
   bills.forEach(u=>{
     const count = parseInt(document.getElementById('w'+u).value)||0;
     const sum = count*u;
@@ -147,7 +146,6 @@ function calculate() {
     total += sum;
   });
 
-  // 동전 계산 (묶음+낱개)
   coins.forEach(c=>{
     const b = parseInt(document.getElementById('b'+c.unit).value)||0;
     const w = parseInt(document.getElementById('w'+c.unit).value)||0;
@@ -156,11 +154,9 @@ function calculate() {
     total += sum;
   });
 
-  // 총합 표시
   const totalDiv = document.getElementById('total');
   totalDiv.textContent = '총합: '+total.toLocaleString()+'원';
 
-  // 부족/초과 표시
   const diffDiv = document.getElementById('diff');
   const diff = total-TARGET;
   if(diff===0){
