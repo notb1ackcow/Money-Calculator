@@ -18,7 +18,7 @@
   }
   table {
     width: 100%;
-    max-width: 400px; /* 폭 축소 */
+    max-width: 400px;
     margin: 0 auto;
     border-collapse: collapse;
     background: #fff;
@@ -39,17 +39,20 @@
     background: #f9f9f9;
   }
   input {
-    width: 60px; /* 입력창 폭 축소 */
+    width: 60px;
     text-align: right;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    font-size: 15px; /* iOS 확대 방지 */
+    font-size: 15px;
   }
   input:focus {
     border-color: #3498db;
     outline: none;
     box-shadow: 0 0 4px #3498db;
+  }
+  td:last-child {
+    min-width: 90px;
   }
   button {
     display: block;
@@ -83,16 +86,18 @@
     margin-top: 5px;
     color: #e74c3c;
   }
-
   @media (max-width: 480px) {
     th, td {
       padding: 6px;
       font-size: 0.9em;
     }
     input {
-      width: 50px; /* 모바일에서 더 작게 */
+      width: 50px;
       font-size: 14px;
       padding: 4px;
+    }
+    td:last-child {
+      min-width: 70px;
     }
     #total {
       font-size: 1.1em;
@@ -161,7 +166,7 @@ function calculate() {
   const diff = total-TARGET;
   if(diff===0){
     totalDiv.style.background='#2ecc71';
-    diffDiv.textContent='완벽히 50만원입니다!';
+    diffDiv.textContent='정상입니다!';
   } else {
     totalDiv.style.background='#e74c3c';
     diffDiv.textContent = diff>0?'초과: '+diff.toLocaleString()+'원':'부족: '+(-diff).toLocaleString()+'원';
