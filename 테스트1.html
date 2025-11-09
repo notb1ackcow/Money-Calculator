@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>돈 계산기</title>
+<style>
+  body {
+    font-family: 'Noto Sans', sans-serif;
+    margin: 20px;
+    background: #f0f4f8;
+    color: #333;
+  }
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  table {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  th, td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  th {
+    background: #3498db;
+    color: #fff;
+  }
+  tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+  input {
+    width: 70px;
+    text-align: right;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 4px #3498db;
+  }
+  button {
+    display: block;
+    margin: 20px auto;
+    padding: 12px 20px;
+    background: #3498db;
+    color: #fff;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 90%;
+    max-width: 300px;
+  }
+  button:hover {
+    background: #2980b9;
+  }
+  #total {
+    font-weight: bold;
+    font-size: 1.3em;
+    text-align: center;
+    margin-top: 20px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background 0.3s;
+  }
+  #diff {
+    text-align: center;
+    font-size: 1.1em;
+    margin-top: 5px;
+    color: #e74c3c;
+  }
+
+  /* 모바일 반응형 */
+  @media (max-width: 480px) {
+    th, td {
+      padding: 6px;
+      font-size: 0.9em;
+    }
+    input {
+      width: 50px;
+      font-size: 0.9em;
+      padding: 4px;
+    }
+    #total {
+      font-size: 1.1em;
+      padding: 8px;
+    }
+    button {
+      width: 95%;
+      font-size: 0.95em;
+      padding: 10px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>돈 계산기</h1>
+
+<table>
+<tr><th>권종</th><th>묶음</th><th>낱개</th><th>합계</th></tr>
+<tr><td>50,000원</td><td>-</td><td><input type="number" id="w50000" min="0"></td><td id="sum50000">0원</td></tr>
+<tr><td>10,000원</td><td>-</td><td><input type="number" id="w10000" min="0"></td><td id="sum10000">0원</td></tr>
+<tr><td>5,000원</td><td>-</td><td><input type="number" id="w5000" min="0"></td><td id="sum5000">0원</td></tr>
+<tr><td>1,000원</td><td>-</td><td><input type="number" id="w1000" min="0"></td><td id="sum1000">0원</td></tr>
+<tr><td>500원</td><td><input type="number" id="b500" min="0"></td><td><input type="number" id="w500" min="0"></td><td id="sum500">0원</td></tr>
+<tr><td>100원</td><td><input type="number" id="b100" min="0"></td><td><input type="number" id="w100" min="0"></td><td id="sum100">0원</td></tr>
+<tr><td>50원</td><td><input type="number" id="b50" min="0"></td><td><input type="number" id="w50" min="0"></td><td id="sum50">0원</td></tr>
+<tr><td>10원</td><td><input type="number" id="b10" min="0"></td><td><input type="number" id="w10" min="0"></td><td id="sum10">0원</td></tr>
+</table>
+
+<div id="total">총합: 0원</div>
+<div id="diff"></div>
+<button onclick="resetAll()">초기화</button>
+
+<script>
+const TARGET = 500000;
+const bills = [50000, 10000, 5000, 1000];
+const coins = [
+  {unit: 500, bundle: 40},
+  {unit: 100, bundle: 50},
+  {unit: 50,  bundle: 50},
+  {unit: 10,  bundle: 50}
+];
+
+function calculate() {
+  let total = 0;
+  bills.forEach(u => {
+    const count = parseInt(document.getElementById('w'+u).value) || 0;
+    const sum = count * u;
+    document.getElementById('sum'+u).textContent = sum.toLocaleString() + '원';
+    total += sum;
+  });
+  coins.forEach(c => {
+    const b = parseInt(document.getElementById('b'+c.unit).value) || 0;
+    const w = parseInt(document.getElementById('w'+c.unit).value) || 0;
+    const sum = (b * c.bundle + w) * c.unit;
+    document.getElementById('sum'+c.unit).textContent = sum.toLocaleString() + '원';
+    total += sum;
+  });
+
+  const totalDiv = document.getElementById('total');
+  totalDiv.textContent = '총합: ' + total.toLocaleString() + '원';
+
+  const diffDiv = document.getElementById('diff');
+  const diff = total - TARGET;
+  if(diff === 0){
+    totalDiv.style.background = '#2ecc71';
+    diffDiv.textContent = '완벽히 50만원입니다!';
+  } else {
+    totalDiv.style.background = '#e74c3c';
+    diffDiv.textContent = diff > 0 ? '초과: '+diff.toLocaleString()+'원' : '부족: '+(-diff).toLocaleString()+'원';
+  }
+}
+
+function resetAll(){
+  [...bills, ...coins.map(c=>c.unit)].forEach(u=>{
+    const w = document.getElementById('w'+u);
+    if(w) w.value = '';
+    const b = document.getElementById('b'+u);
+    if(b) b.value = '';
+    const s = document.getElementById('sum'+u);
+    if(s) s.textContent = '0원';
+  });
+  document.getElementById('total').textContent = '총합: 0원';
+  document.getElementById('total').style.background = 'none';
+  document.getElementById('diff').textContent = '';
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  document.querySelectorAll('input').forEach(input=>{
+    input.addEventListener('input', calculate);
+  });
+});
+</script>
+</body>
+</html>
